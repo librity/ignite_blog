@@ -8,6 +8,10 @@
   <img src=".github/post.png">
 </p>
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/c2998254-a346-4076-93f2-f913c6499105/deploy-status)](https://app.netlify.com/sites/blissful-brahmagupta-a9be45/deploys)
+
+- Production: https://tech1776.netlify.app/
+
 ## Table of Contents
 
 - [About](#about)
@@ -66,5 +70,4 @@ You can create a new item by clicking in `Novo Prato`.
 - https://www.tutorialspoint.com/typescript/typescript_interfaces.htm
 - https://unsplash.com/s/photos/code
 - https://www.uuidgenerator.net/
-- https://tech1776.prismic.io/api
 - https://anadea.info/tools/online-business-name-generator/tech-company/search
