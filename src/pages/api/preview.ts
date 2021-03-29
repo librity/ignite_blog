@@ -1,44 +1,31 @@
-import Prismic from '@prismicio/client';
-
-import { Document } from '@prismicio/client/types/documents';
-
-const apiEndpoint = process.env.PRISMIC_API_ENDPOINT;
-const accessToken = process.env.PRISMIC_ACCESS_TOKEN;
+import { NextApiRequest, NextApiResponse } from 'next'
+import { Document } from '@prismicio/client/types/documents'
+import { getPrismicClient } from '../../services/prismic'
 
 function linkResolver(doc: Document): string {
   if (doc.type === 'posts') {
-    return `/post/${doc.uid}`;
+    return `/post/${doc.uid}`
   }
-  return '/';
+  return '/'
 }
 
-const Client = (req = null) =>
-  Prismic.client(apiEndpoint, createClientOptions(req, accessToken));
+// eslint-disable-next-line consistent-return
+export default async (request: NextApiRequest, response: NextApiResponse) => {
+  const { token: ref, documentId } = request.query as {
+    token: string
+    documentId: string
+  }
+  const prismic = getPrismicClient(request)
 
-const createClientOptions = (req = null, prismicAccessToken = null) => {
-  const reqOption = req ? { req } : {};
-  const accessTokenOption = prismicAccessToken
-    ? { accessToken: prismicAccessToken }
-    : {};
-  return {
-    ...reqOption,
-    ...accessTokenOption,
-  };
-};
-
-const Preview = async (req, res) => {
-  const { token: ref, documentId } = req.query;
-  const redirectUrl = await Client(req)
+  const redirectUrl = await prismic
     .getPreviewResolver(ref, documentId)
-    .resolve(linkResolver, '/');
+    .resolve(linkResolver, '/')
 
   if (!redirectUrl) {
-    return res.status(401).json({ message: 'Invalid token' });
+    return response.status(401).json({ message: 'Invalid token' })
   }
 
-  res.setPreviewData({ ref });
-  res.writeHead(302, { Location: `${redirectUrl}` });
-  res.end();
-};
-
-export default Preview;
+  response.setPreviewData({ ref })
+  response.writeHead(302, { Location: `${redirectUrl}` })
+  response.end()
+}

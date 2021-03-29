@@ -1,14 +1,13 @@
-.headerContainer {
-  height: 7.5rem;
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  height: 6.5rem;
+}
 
-  > div {
-    height: 100%;
-
-    display: flex;
-    align-items: center;
-  }
-
-  a {
-    display: flex;
-  }
+.content {
+  max-width: 720px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }

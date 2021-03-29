@@ -1,117 +1,121 @@
-import { GetStaticProps } from 'next';
-import Head from 'next/head';
-import Link from 'next/link';
-import Prismic from '@prismicio/client';
-import { format } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
+import { GetStaticProps } from 'next'
+import Prismic from '@prismicio/client'
+import { format } from 'date-fns'
+import { FiUser, FiCalendar } from 'react-icons/fi'
 
-import { FiCalendar, FiUser } from 'react-icons/fi';
+import ptBR from 'date-fns/locale/pt-BR'
 
-import { getPrismicClient } from '../services/prismic';
+import Link from 'next/link'
+import { useState } from 'react'
+import { Header, MetaTags, ExitPreviewButton } from '../components'
+import { getPrismicClient } from '../services/prismic'
 
-import commonStyles from '../styles/common.module.scss';
-import styles from './home.module.scss';
-import { useState } from 'react';
+import styles from './home.module.scss'
 
 interface Post {
-  uid?: string;
-  first_publication_date: string | null;
+  uid?: string
+  first_publication_date: string | null
   data: {
-    title: string;
-    subtitle: string;
-    author: string;
-  };
+    title: string
+    subtitle: string
+    author: string
+  }
 }
 
 interface PostPagination {
-  next_page: string;
-  results: Post[];
+  next_page: string
+  results: Post[]
 }
 
 interface HomeProps {
-  postsPagination: PostPagination;
+  postsPagination: PostPagination
+  preview: boolean
 }
 
-export default function Home({ postsPagination }: HomeProps) {
-  const [posts, setPosts] = useState<Post[]>(postsPagination.results);
-  const [hasMore, setHasMore] = useState(!!postsPagination.next_page);
-  const [nextPage, setNextPage] = useState(postsPagination.next_page);
+export default function Home(props: HomeProps) {
+  const {
+    postsPagination: { next_page, results },
+    preview = false,
+  } = props
 
-  async function handleLoadMore() {
-    const responseLoadMore = await fetch(nextPage).then((result) =>
-      result.json(),
-    );
+  const [posts, setPosts] = useState(results)
+  const [nextPage, setNextPage] = useState(next_page)
 
-    setPosts([...posts, ...responseLoadMore.results]);
-    setHasMore(!!responseLoadMore.next_page);
-    setNextPage(responseLoadMore.next_page);
+  const loadMorePosts = async () => {
+    if (!nextPage) {
+      return
+    }
+    fetch(nextPage)
+      .then(response => response.json())
+      .then(response => {
+        const newPosts = [...posts, ...response.results]
+        setNextPage(response.next_page)
+        setPosts(newPosts)
+      })
   }
 
   return (
     <>
-      <Head>
-        <title>Home | spacetraveling</title>
-      </Head>
-
-      <main className={commonStyles.container}>
-        <div className={styles.mainContainer}>
-          <img src="logo.svg" alt="logo" />
-
-          <ul>
-            {posts.map((post) => (
-              <li key={post.uid}>
-                <Link href={`/post/${post.uid}`}>
-                  <a>
-                    <strong>{post.data.title}</strong>
-                    <p>{post.data.subtitle}</p>
-                    <div>
-                      <span>
-                        <FiCalendar />
-                        {format(
-                          new Date(post.first_publication_date),
-                          'd MMM y',
-                          {
-                            locale: ptBR,
-                          },
-                        )}
-                      </span>
-                      <span>
-                        <FiUser />
-                        {post.data.author}
-                      </span>
-                    </div>
-                  </a>
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          {hasMore && (
-            <button onClick={handleLoadMore}>Carregar mais posts</button>
-          )}
-        </div>
+      <MetaTags title="Home" />
+      <Header />
+      <main className={styles.container}>
+        {posts.map(({ data, uid, first_publication_date }) => (
+          <section
+            className={styles.postSection}
+            key={`${uid}${first_publication_date}`}
+          >
+            <Link href={`/post/${uid}`}>
+              <a>
+                <h1>{data.title}</h1>
+                <h2>{data.subtitle}</h2>
+                <section>
+                  <FiCalendar />
+                  <time>
+                    {format(new Date(first_publication_date), 'dd LLL yyyy', {
+                      locale: ptBR,
+                    })}
+                  </time>
+                  <FiUser />
+                  <span>{data.author}</span>
+                </section>
+              </a>
+            </Link>
+          </section>
+        ))}
+        {nextPage && (
+          <section className={styles.nextSection}>
+            <button type="button" onClick={loadMorePosts}>
+              <strong>Carregar mais posts</strong>
+            </button>
+          </section>
+        )}
+        {preview && <ExitPreviewButton />}
       </main>
     </>
-  );
+  )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
-  const prismic = getPrismicClient();
-  const postsResponse = await prismic.query(
+export const getStaticProps: GetStaticProps<HomeProps> = async ({
+  preview = false,
+  previewData,
+}) => {
+  const prismic = getPrismicClient()
+  const { results, next_page } = await prismic.query(
     [Prismic.predicates.at('document.type', 'posts')],
     {
-      pageSize: 2,
+      fetch: ['title', 'subtitle', 'author'],
+      pageSize: 3,
+      ref: previewData?.ref ?? null,
     },
-  );
-
-  const postsPagination = {
-    next_page: postsResponse.next_page,
-    results: postsResponse.results,
-  };
+  )
 
   return {
     props: {
-      postsPagination,
+      postsPagination: {
+        next_page,
+        results,
+      },
+      preview,
     },
-  };
-};
+  }
+}

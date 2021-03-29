@@ -1,6 +1,7 @@
-export default async (_, res) => {
-  res.clearPreviewData();
+import { NextApiRequest, NextApiResponse } from 'next'
 
-  res.writeHead(307, { Location: '/' });
-  res.end();
-};
+export default async (_request: NextApiRequest, response: NextApiResponse) => {
+  response.clearPreviewData()
+  response.writeHead(307, { Location: '/' })
+  response.end()
+}
