@@ -63,6 +63,8 @@ You can browse and read posts.
 - https://react-icons.github.io/react-icons/
 - https://date-fns.org/docs/Getting-Started
 - https://nextjs.org/docs/basic-features/data-fetching#fallback-pages
+- https://utteranc.es/
+- https://github.com/utterance/utterances/issues/161
 
 ## Resources <a name = "resources"></a>
 
