@@ -1,7 +1,11 @@
-# Rocket Seat Ignite - Blog
+# Rocket Seat Ignite - Pretentious Tech Blog
 
 <p align="center">
   <img src=".github/home.png">
+</p>
+
+<p align="center">
+  <img src=".github/post.png">
 </p>
 
 ## Table of Contents
@@ -60,3 +64,7 @@ You can create a new item by clicking in `Novo Prato`.
 ## Resources <a name = "resources"></a>
 
 - https://www.tutorialspoint.com/typescript/typescript_interfaces.htm
+- https://unsplash.com/s/photos/code
+- https://www.uuidgenerator.net/
+- https://tech1776.prismic.io/api
+- https://anadea.info/tools/online-business-name-generator/tech-company/search
