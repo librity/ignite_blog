@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-export const Comments = (): JSX.Element => {
+const Comments = (): JSX.Element => {
   const router = useRouter();
   const comments = <div id="inject-comments-for-uterances" />;
 
@@ -21,3 +21,5 @@ export const Comments = (): JSX.Element => {
 
   return comments;
 };
+
+export default Comments;
