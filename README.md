@@ -52,8 +52,7 @@ $ yarn dev
 
 ## Usage <a name = "usage"></a>
 
-On the home screen, you can edit, delete and disable items.
-You can create a new item by clicking in `Novo Prato`.
+You can browse and read posts.
 
 ## Docs <a name = "docs"></a>
 
